@@ -86,7 +86,6 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
         if (fragment instanceof WebViewBack) {
             if (((WebViewBack) fragment).goBack()) {
                 replaceFragment(new HomeFragment(this), "Home");
-                //super.onBackPressed();
             }
             /*if (getFragmentManager().getBackStackEntryCount() == 0){
                 replaceFragment(new HomeFragment(this), "Home");

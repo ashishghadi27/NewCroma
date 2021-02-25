@@ -1,6 +1,9 @@
 package com.asg.ashish.privacybrowser.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +44,7 @@ import com.asg.ashish.privacybrowser.WebViewUtils.KeyBoardInputListener;
 import com.asg.ashish.privacybrowser.WebViewUtils.WebViewChromeRendererClient;
 import com.asg.ashish.privacybrowser.WebViewUtils.WebViewRendererClient;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +59,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
     private LinearLayout optionsLay;
     private ProgressBar progressBar;
     private SwipeRefreshLayout refreshLayout;
-    private ImageView clear;
+    private ImageView clear, menu;
     private boolean cleared = false;
     private AutoSuggestAdapter autoSuggestAdapter;
     private VolleyUtil volleyUtil;
@@ -100,10 +105,12 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         progressBar = view.findViewById(R.id.progress);
         refreshLayout = view.findViewById(R.id.swipeRefresh);
         clear = view.findViewById(R.id.clear);
+        menu = view.findViewById(R.id.menu);
         tabSwitcher = view.findViewById(R.id.tabSwitcher);
         tabSwitcher.setText(operations.getCount() + "");
         volleyUtil = new VolleyUtil(getContext(), this);
         initWebView();
+
         web.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -215,6 +222,13 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
                 replace(new AllTabs(operations), "AllTabs");
             }
         });
+
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
     }
 
     private void initWebView(){
@@ -245,6 +259,10 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             Log.v("In upper", "else");
             deactivateCanGoBack = true;
             web.loadUrl(stack.pop());
+            if(stack.isEmpty()) {
+                deactivateCanGoBack = false;
+                web.clearHistory();
+            }
             return false;
         }
         else {
@@ -331,5 +349,138 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         }
         if(s.isEmpty()) s.push(getSearchEngineUrl());
         operations.setStack(s, this);
+    }
+
+    public void showDialog(){
+        final BottomSheetDialog bottom_sheet_dialog = new BottomSheetDialog(Objects.requireNonNull(getContext()));
+        View dialog = View.inflate(getContext(), R.layout.menulay, null);
+        bottom_sheet_dialog.setContentView(dialog);
+        bottom_sheet_dialog.show();
+
+        final LinearLayout newTab, searchEngine, share, rate, report, reload, forward;
+
+        newTab = dialog.findViewById(R.id.newTabMenu);
+        searchEngine = dialog.findViewById(R.id.searchEngine);
+        share = dialog.findViewById(R.id.share);
+        rate = dialog.findViewById(R.id.rate);
+        report = dialog.findViewById(R.id.report);
+        reload = dialog.findViewById(R.id.reload);
+        forward = dialog.findViewById(R.id.forward);
+
+        newTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addTab();
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        searchEngine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSearchEngineDialog();
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share(web.getUrl(), web.getTitle());
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        rate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.asg.ashish.privacybrowser"));
+                ((Activity) Objects.requireNonNull(getContext())).startActivity(intent);
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = newEmailIntent(Constants.REPORT_MAIL, "Bug In Croma");
+                Objects.requireNonNull(getContext()).startActivity(Intent.createChooser(i, "Select an email client"));
+            }
+        });
+
+        reload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                web.reload();
+            }
+        });
+
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(web.canGoForward()) web.goForward();
+                else Toast.makeText(getContext(), "Can't Go Forward",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void showSearchEngineDialog(){
+        final BottomSheetDialog bottom_sheet_dialog = new BottomSheetDialog(Objects.requireNonNull(getContext()));
+        View dialog = View.inflate(getContext(), R.layout.search_engine_dialog, null);
+        bottom_sheet_dialog.setContentView(dialog);
+        bottom_sheet_dialog.show();
+
+        LinearLayout google, duckDuckGo, bing, reset;
+        google = dialog.findViewById(R.id.google);
+        duckDuckGo = dialog.findViewById(R.id.duck_duck_go);
+        bing = dialog.findViewById(R.id.bing);
+        reset = dialog.findViewById(R.id.reset);
+
+        google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSearchEngine(Constants.GOOGLE_SEARCH_ENGINE, "Google", Constants.GOOGLE_SEARCH_LOGO);
+                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        duckDuckGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSearchEngine(Constants.DUCK_DUCK_GO_SEARCH_ENGINE, "Duck Duck Go", Constants.DUCK_DUCK_GO_SEARCH_LOGO);
+                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        bing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSearchEngine(Constants.BING_SEARCH_ENGINE, "Bing", Constants.BING_SEARCH_LOGO);
+                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSearchEngine(Constants.DUCK_DUCK_GO_SEARCH_ENGINE, "Duck Duck Go", Constants.DUCK_DUCK_GO_SEARCH_LOGO);
+                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
+    }
+
+    private void addTab(){
+        setFragmentListStack();
+        WebFragment webFragment = new WebFragment(operations, getSearchEngineUrl(), null);
+        operations.addTab(webFragment, getSearchEngineName());
+        Stack<String> stack = new Stack<>();
+        stack.push(getSearchEngineUrl());
+        operations.setStack(stack, webFragment);
+        replace(webFragment, "web" + operations.getCount() + 1);
     }
 }

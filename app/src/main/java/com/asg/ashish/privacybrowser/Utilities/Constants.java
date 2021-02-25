@@ -11,4 +11,6 @@ public class Constants {
     public static int GOOGLE_SEARCH_LOGO = R.drawable.ic_icons8_google;
     public static int BING_SEARCH_LOGO = R.drawable.ic_icons8_bing;
     public static int DUCK_DUCK_GO_SEARCH_LOGO = R.drawable.ic_icons8_duckduckgo;
+    public static String GET_CROMA = "https://play.google.com/store/apps/details?id=com.asg.ashish.privacybrowser";
+    public static String REPORT_MAIL = "rootdevs27@gmail.com";
 }

@@ -1,9 +1,11 @@
 package com.asg.ashish.privacybrowser.Utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ShareActionProvider;
 
 import androidx.fragment.app.Fragment;
 
@@ -28,6 +30,13 @@ public class BaseFragment extends Fragment {
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_from_left, R.anim.enter_from_left, R.anim.exit_from_right)
                 .replace(R.id.fragment_container, fragment, tag)
                 .commit();
+    }
+
+    public void share(String link, String title){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, title + " - " +link);
+        startActivity(Intent.createChooser(shareIntent, title));
     }
 
     /*public void showDialog(){
@@ -82,6 +91,15 @@ public class BaseFragment extends Fragment {
         });
 
     }*/
+
+    public Intent newEmailIntent(String address, String subject) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        //intent.setType("message/rfc822");
+        intent.setType("text/plain");
+        return intent;
+    }
 
     public void setSearchEngine(String url, String name, int logo){
         SharedPreferences preferences = Objects.requireNonNull(getContext()).getSharedPreferences("engine", Context.MODE_PRIVATE);

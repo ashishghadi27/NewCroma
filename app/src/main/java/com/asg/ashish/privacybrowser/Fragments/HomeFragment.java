@@ -1,12 +1,17 @@
 package com.asg.ashish.privacybrowser.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.MailTo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Contacts;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -95,13 +100,14 @@ public class HomeFragment extends BaseFragment {
         operations.setStack(stack, webFragment);
         addFragment(webFragment, "web" + operations.getCount() + 1);
     }
+
     public void showDialog(){
         final BottomSheetDialog bottom_sheet_dialog = new BottomSheetDialog(Objects.requireNonNull(getContext()));
         View dialog = View.inflate(getContext(), R.layout.menu_home, null);
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
-        LinearLayout newTab, searchEngine, share, rate, report;
+        final LinearLayout newTab, searchEngine, share, rate, report;
 
         newTab = dialog.findViewById(R.id.newTabMenu);
         searchEngine = dialog.findViewById(R.id.searchEngine);
@@ -128,23 +134,29 @@ public class HomeFragment extends BaseFragment {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                share(Constants.GET_CROMA, "Download Croma");
+                bottom_sheet_dialog.dismiss();
             }
         });
 
         rate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.asg.ashish.privacybrowser"));
+                ((Activity) Objects.requireNonNull(getContext())).startActivity(intent);
+                bottom_sheet_dialog.dismiss();
             }
         });
 
         report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = newEmailIntent(Constants.REPORT_MAIL, "Bug In Croma");
+                Objects.requireNonNull(getContext()).startActivity(Intent.createChooser(i, "Select an email client"));
             }
         });
+
+
     }
 
     public void showSearchEngineDialog(){
