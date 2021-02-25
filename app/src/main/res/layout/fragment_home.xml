@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.HomeFragment"
+    android:background="@drawable/browser_back">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topbar"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/homePage"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_icons8_home"
+            android:layout_alignParentStart="true"/>
+
+        <ImageView
+            android:id="@+id/menu"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/menu"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:id="@+id/tabSwitcher"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:text="2"
+            android:background="@drawable/tab_back"
+            android:textColor="#fff"
+            android:layout_centerVertical="true"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:textAlignment="center"
+            android:layout_toStartOf="@id/menu"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="25dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_bino_home"
+                    android:layout_gravity="center"
+                    android:elevation="5dp"
+                    android:layout_marginStart="20dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="15dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:elevation="5dp"
+                        android:textColor="#fff"
+                        android:textSize="50sp"
+
+                        android:fontFamily="@font/quicksand_bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="The Privacy Browser"
+                        android:fontFamily="@font/quicksand_medium"
+                        android:textColor="#92F4F2F2"
+
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/addressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_back"
+                android:fontFamily="@font/quicksand_bold"
+                android:textColor="#fff"
+                android:textColorHint="#CFC8C8"
+                android:drawableStart="@drawable/ic_icons8_google"
+                android:drawablePadding="10dp"
+                android:hint="@string/search"
+                android:textSize="15sp"
+                android:padding="10dp"
+                android:elevation="5dp"
+                android:drawableEnd="@drawable/ic_icons8_search"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

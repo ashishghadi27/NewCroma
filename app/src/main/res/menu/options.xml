@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraText"
+    >
+
+    <item
+        android:id="@+id/menuItem"
+        android:orderInCategory="0"
+        android:title="Menu"
+        app:actionLayout="@layout/menulay"
+        />
+
+</menu>
