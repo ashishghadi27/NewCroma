@@ -11,6 +11,8 @@ import android.webkit.WebView;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.asg.ashish.privacybrowser.Interfaces.InstanceAccessor;
+import com.asg.ashish.privacybrowser.Interfaces.TabPlacer;
 import com.asg.ashish.privacybrowser.Utilities.Constants;
 
 public class KeyBoardInputListener implements AutoCompleteTextView.OnEditorActionListener {
@@ -18,11 +20,13 @@ public class KeyBoardInputListener implements AutoCompleteTextView.OnEditorActio
     private AutoCompleteTextView addressBar;
     private WebView webView;
     private Context context;
+    private InstanceAccessor placer;
 
-    public KeyBoardInputListener(AutoCompleteTextView addressBar, WebView webView, Context context) {
+    public KeyBoardInputListener(AutoCompleteTextView addressBar, WebView webView, Context context, InstanceAccessor placer) {
         this.addressBar = addressBar;
         this.webView = webView;
         this.context = context;
+        this.placer = placer;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class KeyBoardInputListener implements AutoCompleteTextView.OnEditorActio
             String query = addressBar.getText().toString().trim();
             if(!TextUtils.isEmpty(query)){
                 if (!Patterns.WEB_URL.matcher(query).matches()) {
-                    query = Constants.GOOGLE_SEARCH_ENGINE + query;
+                    query = placer.getSearchEngine() + query;
                     webView.loadUrl(query);
                 } else if (query.startsWith("https") || query.startsWith("http")) {
                     webView.loadUrl(query);

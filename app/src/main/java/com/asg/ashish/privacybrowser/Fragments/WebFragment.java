@@ -121,12 +121,12 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             }
         });
 
-        addressBar.setOnEditorActionListener(new KeyBoardInputListener(addressBar, web, getContext()));
+        addressBar.setOnEditorActionListener(new KeyBoardInputListener(addressBar, web, getContext(), this));
 
         addressBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                    if ((event.getAction() == MotionEvent.ACTION_DOWN || optionsLay.getVisibility() == View.VISIBLE)) {
+                    if ((event.getAction() == MotionEvent.ACTION_DOWN && optionsLay.getVisibility() == View.VISIBLE)) {
                         optionsLay.setVisibility(View.GONE);
                         addressBar.requestFocus();
                         openKeyboard(addressBar);
@@ -142,7 +142,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         addressBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(optionsLay.getVisibility() == View.GONE){
+                if(optionsLay.getVisibility() == View.GONE && !addressBar.isFocused()){
                     optionsLay.setVisibility(View.VISIBLE);
                     closeKeyboard();
                     addressBar.setText(web.getTitle());
@@ -181,18 +181,16 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v("Call: ", "Started");
                 String query = addressBar.getText().toString().trim();
                 if(!query.contains("https") && !query.contains("http") && cleared)
                     volleyUtil.getRequest(query);
-                Log.v("Call: ", "Completed");
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 String text = addressBar.getText().toString().trim();
                 if(text.equals("")){
-                    initHttpsStatus();
+                    addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
                     cleared = true;
                 }
             }
@@ -211,7 +209,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             public void onClick(View v) {
                 cleared = true;
                 addressBar.setText(null);
-                initHttpsStatus();
+                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
             }
         });
 
@@ -315,6 +313,11 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         autoSuggestAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public String getSearchEngine() {
+        return getSearchEngineUrl();
+    }
+
     private void closeKeyboard(){
         InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
         assert imm != null;
@@ -366,7 +369,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         report = dialog.findViewById(R.id.report);
         reload = dialog.findViewById(R.id.reload);
         forward = dialog.findViewById(R.id.forward);
-
+        if(web.canGoForward()) forward.setVisibility(View.VISIBLE);
         newTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -405,6 +408,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             public void onClick(View v) {
                 Intent i = newEmailIntent(Constants.REPORT_MAIL, "Bug In Croma");
                 Objects.requireNonNull(getContext()).startActivity(Intent.createChooser(i, "Select an email client"));
+                bottom_sheet_dialog.dismiss();
             }
         });
 
@@ -412,6 +416,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             @Override
             public void onClick(View v) {
                 web.reload();
+                bottom_sheet_dialog.dismiss();
             }
         });
 
@@ -420,6 +425,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             public void onClick(View v) {
                 if(web.canGoForward()) web.goForward();
                 else Toast.makeText(getContext(), "Can't Go Forward",Toast.LENGTH_SHORT).show();
+                bottom_sheet_dialog.dismiss();
             }
         });
     }
@@ -440,7 +446,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             @Override
             public void onClick(View v) {
                 setSearchEngine(Constants.GOOGLE_SEARCH_ENGINE, "Google", Constants.GOOGLE_SEARCH_LOGO);
-                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                changeSearchEngine();
                 bottom_sheet_dialog.dismiss();
             }
         });
@@ -449,7 +455,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             @Override
             public void onClick(View v) {
                 setSearchEngine(Constants.DUCK_DUCK_GO_SEARCH_ENGINE, "Duck Duck Go", Constants.DUCK_DUCK_GO_SEARCH_LOGO);
-                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                changeSearchEngine();
                 bottom_sheet_dialog.dismiss();
             }
         });
@@ -458,7 +464,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             @Override
             public void onClick(View v) {
                 setSearchEngine(Constants.BING_SEARCH_ENGINE, "Bing", Constants.BING_SEARCH_LOGO);
-                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                changeSearchEngine();
                 bottom_sheet_dialog.dismiss();
             }
         });
@@ -467,7 +473,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
             @Override
             public void onClick(View v) {
                 setSearchEngine(Constants.DUCK_DUCK_GO_SEARCH_ENGINE, "Duck Duck Go", Constants.DUCK_DUCK_GO_SEARCH_LOGO);
-                addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
+                changeSearchEngine();
                 bottom_sheet_dialog.dismiss();
             }
         });
@@ -483,4 +489,12 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         operations.setStack(stack, webFragment);
         replace(webFragment, "web" + operations.getCount() + 1);
     }
+
+    private void changeSearchEngine(){
+        String url = web.getUrl();
+        String engine = getSearchEngineUrl();
+        if(url.equals(Constants.GOOGLE_AFTER_URL) || url.contains(Constants.BING_AFTER_URL) || url.equals(Constants.DUCK_AFTER_URL))
+            web.loadUrl(engine);
+    }
+
 }

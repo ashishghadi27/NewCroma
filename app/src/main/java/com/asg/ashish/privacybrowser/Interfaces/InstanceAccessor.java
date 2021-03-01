@@ -10,4 +10,5 @@ public interface InstanceAccessor {
     void setHttpsStatus(boolean isHttps);
     void initHttpsStatus();
     void setAdapter(List<String> suggestions);
+    String getSearchEngine();
 }

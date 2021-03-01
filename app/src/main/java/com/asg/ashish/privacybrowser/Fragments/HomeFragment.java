@@ -46,6 +46,10 @@ public class HomeFragment extends BaseFragment {
         this.operations = operations;
     }
 
+    public HomeFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,5 +211,9 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
+    }
+
+    public void setOperations(FragmentListOperations operations){
+        this.operations = operations;
     }
 }

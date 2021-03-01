@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +24,7 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
 
     private List<FragmentStorage> listItems;
     private TabPlacer placer;
-    private static int CLICK_THRESHOLD = 100;
+    private static int CLICK_THRESHOLD = 500;
     private Context context;
 
 
@@ -41,6 +42,7 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
             closeTab = view.findViewById(R.id.closeTab);
             webView.setInitialScale(100);
             webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
 
     }

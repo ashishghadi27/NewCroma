@@ -1,5 +1,6 @@
 package com.asg.ashish.privacybrowser.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -26,11 +27,15 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        Log.v("created", "re");
+        super.onCreate(null);
         setContentView(R.layout.activity_main);
         fragmentList = new ArrayList<>();
-        addFragmentAct(new HomeFragment(this), "Home");
+        HomeFragment fragment = new HomeFragment();
+        fragment.setOperations(this);
+        addFragmentAct(fragment, "Home");
     }
+
 
     @Override
     public void addTab(WebFragment fragment, String title) {
@@ -87,10 +92,13 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
             if (((WebViewBack) fragment).goBack()) {
                 replaceFragment(new HomeFragment(this), "Home");
             }
-            /*if (getFragmentManager().getBackStackEntryCount() == 0){
-                replaceFragment(new HomeFragment(this), "Home");
-            }*/
-        } else if (getFragmentManager().getBackStackEntryCount() == 0){
+        }
+        else if(fragment instanceof HomeFragment){
+            Log.v("hello", "home");
+            super.onBackPressed();
+            super.onBackPressed();
+        }
+        else if (getFragmentManager().getBackStackEntryCount() == 0){
             replaceFragment(new HomeFragment(this), "Home");
         }
         else super.onBackPressed();
