@@ -2,6 +2,7 @@ package com.asg.ashish.privacybrowser.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Contacts;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +37,9 @@ import com.asg.ashish.privacybrowser.Utilities.Constants;
 import com.asg.ashish.privacybrowser.WebViewUtils.MenuFunctions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import org.w3c.dom.Text;
+
+import java.io.File;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -119,19 +124,28 @@ public class HomeFragment extends BaseFragment{
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
-        final LinearLayout newTab, searchEngine, share, rate, report;
+        final LinearLayout newTab, searchEngine, share, rate, report, clearCache;
         RelativeLayout dialogCont;
-        CardView theme1, theme2, theme3, theme4;
+        TextView cacheText;
+        CardView theme1, theme2, theme3, theme4, theme5, theme6, theme7, theme8;
         theme1 = dialog.findViewById(R.id.purple);
         theme2 = dialog.findViewById(R.id.greenish);
         theme3 = dialog.findViewById(R.id.reddish_yellow);
         theme4 = dialog.findViewById(R.id.pinkish_blue);
+        theme5 = dialog.findViewById(R.id.theme5);
+        theme6 = dialog.findViewById(R.id.theme6);
+        theme7 = dialog.findViewById(R.id.theme7);
+        theme8 = dialog.findViewById(R.id.theme8);
 
         newTab = dialog.findViewById(R.id.newTabMenu);
         searchEngine = dialog.findViewById(R.id.searchEngine);
         share = dialog.findViewById(R.id.share);
         rate = dialog.findViewById(R.id.rate);
         report = dialog.findViewById(R.id.report);
+        clearCache = dialog.findViewById(R.id.clear_cache);
+        cacheText = dialog.findViewById(R.id.cacheText);
+        String size = "Clear Cache (" + getCacheSize() + ")";
+        cacheText.setText(size);
         dialogCont = dialog.findViewById(R.id.dialog_cont);
         dialogCont.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
 
@@ -176,34 +190,69 @@ public class HomeFragment extends BaseFragment{
             }
         });
 
+        clearCache.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteCache(getContext());
+                bottom_sheet_dialog.dismiss();
+            }
+        });
+
         theme1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSaving(R.drawable.browser_back, R.color.suggestDefault);
+                startSaving(R.drawable.browser_back, R.color.suggest1);
             }
         });
 
         theme2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSaving(R.drawable.browser_back2, R.color.suggestDefault);
+                startSaving(R.drawable.browser_back2, R.color.suggest2);
             }
         });
 
         theme3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSaving(R.drawable.browser_back3, R.color.suggestDefault);
+                startSaving(R.drawable.browser_back3, R.color.suggest3);
             }
         });
 
         theme4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSaving(R.drawable.browser_back4, R.color.suggestDefault);
+                startSaving(R.drawable.browser_back4, R.color.suggest4);
             }
         });
 
+        theme5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back5, R.color.suggestDefault);
+            }
+        });
+
+        theme6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back6, R.color.suggestDefault);
+            }
+        });
+
+        theme7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back7, R.color.suggestDefault);
+            }
+        });
+
+        theme8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back8, R.color.suggestDefault);
+            }
+        });
 
     }
 
@@ -273,6 +322,53 @@ public class HomeFragment extends BaseFragment{
         operations.setActivityTheme();
         setTheme();
         bottom_sheet_dialog.dismiss();
+    }
+
+    private String getCacheSize() {
+        long size = 0;
+        size += getDirSize(Objects.requireNonNull(getActivity()).getCacheDir());
+        size += getDirSize(Objects.requireNonNull(getActivity().getExternalCacheDir()));
+        size += getDirSize(Objects.requireNonNull(getActivity().getCodeCacheDir()));
+        Log.v("Size",size + "");
+        if(size / (1024 * 1024) > 0) return size / (1024 * 1024) + " MB";
+        else return size / (1024) + " KB";
+    }
+
+    public long getDirSize(File dir){
+        long size = 0;
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file != null && file.isDirectory()) {
+                size += getDirSize(file);
+            } else if (file != null && file.isFile()) {
+                size += file.length();
+            }
+        }
+        return size;
+    }
+
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            assert children != null;
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
     }
 
 }

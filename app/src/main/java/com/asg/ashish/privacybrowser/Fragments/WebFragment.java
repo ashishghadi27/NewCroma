@@ -1,9 +1,11 @@
 package com.asg.ashish.privacybrowser.Fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -44,6 +47,7 @@ import com.asg.ashish.privacybrowser.Interfaces.WebViewBack;
 import com.asg.ashish.privacybrowser.R;
 import com.asg.ashish.privacybrowser.Utilities.BaseFragment;
 import com.asg.ashish.privacybrowser.Utilities.Constants;
+import com.asg.ashish.privacybrowser.WebViewUtils.Downloader;
 import com.asg.ashish.privacybrowser.WebViewUtils.KeyBoardInputListener;
 import com.asg.ashish.privacybrowser.WebViewUtils.WebViewChromeRendererClient;
 import com.asg.ashish.privacybrowser.WebViewUtils.WebViewRendererClient;
@@ -251,6 +255,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         web.setWebViewClient(new WebViewRendererClient(this));
         web.setWebChromeClient(new WebViewChromeRendererClient(progressBar, this));
         web.setScrollContainer(true);
+        web.setDownloadListener(new Downloader(getContext(), this));
         if(!TextUtils.isEmpty(url)) web.loadUrl(url);
         else web.loadUrl(getSearchEngineUrl());
     }
@@ -324,6 +329,21 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
     @Override
     public String getSearchEngine() {
         return getSearchEngineUrl();
+    }
+
+    @Override
+    public boolean hasStoragePermission() {
+        if( Objects.requireNonNull(getContext()).checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean requestStoragePermission() {
+        ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION},1);
+        return false;
     }
 
     private void closeKeyboard(){

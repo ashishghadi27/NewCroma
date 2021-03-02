@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
@@ -18,6 +19,7 @@ import com.asg.ashish.privacybrowser.R;
 import com.asg.ashish.privacybrowser.Utilities.BaseActivity;
 import com.asg.ashish.privacybrowser.WebViewUtils.FragmentStorage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +37,7 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
         setContentView(R.layout.activity_main);
         main = findViewById(R.id.main_container);
         setActivityTheme();
+        //deleteCache(this);
         fragmentList = new ArrayList<>();
         HomeFragment fragment = new HomeFragment();
         fragment.setOperations(this);

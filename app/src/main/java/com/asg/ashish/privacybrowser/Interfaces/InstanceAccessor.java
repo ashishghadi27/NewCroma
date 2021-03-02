@@ -11,4 +11,6 @@ public interface InstanceAccessor {
     void initHttpsStatus();
     void setAdapter(List<String> suggestions);
     String getSearchEngine();
+    boolean hasStoragePermission();
+    boolean requestStoragePermission();
 }
