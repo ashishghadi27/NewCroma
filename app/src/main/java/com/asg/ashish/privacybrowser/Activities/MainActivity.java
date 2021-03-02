@@ -2,11 +2,13 @@ package com.asg.ashish.privacybrowser.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.asg.ashish.privacybrowser.Fragments.HomeFragment;
 import com.asg.ashish.privacybrowser.Fragments.WebFragment;
@@ -24,12 +26,15 @@ import java.util.Stack;
 public class MainActivity extends BaseActivity implements FragmentListOperations {
 
     private List<FragmentStorage> fragmentList;
+    private RelativeLayout main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v("created", "re");
         super.onCreate(null);
         setContentView(R.layout.activity_main);
+        main = findViewById(R.id.main_container);
+        setActivityTheme();
         fragmentList = new ArrayList<>();
         HomeFragment fragment = new HomeFragment();
         fragment.setOperations(this);
@@ -102,6 +107,10 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
             replaceFragment(new HomeFragment(this), "Home");
         }
         else super.onBackPressed();
+    }
+
+    public void setActivityTheme(){
+        main.setBackground(ResourcesCompat.getDrawable(getResources(), loadTheme(), getTheme()));
     }
 
 }

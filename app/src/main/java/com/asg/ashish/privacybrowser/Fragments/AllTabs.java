@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.asg.ashish.privacybrowser.Adapter.ListAllTabsAdapter;
@@ -33,6 +35,7 @@ public class AllTabs extends BaseFragment implements TabPlacer {
     private RecyclerView recyclerView;
     private ListAllTabsAdapter allTabsAdapter;
     private TextView addTab;
+    private LinearLayout main;
 
     public AllTabs(FragmentListOperations operations) {
         this.operations = operations;
@@ -56,6 +59,8 @@ public class AllTabs extends BaseFragment implements TabPlacer {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
         addTab = view.findViewById(R.id.addTab);
+        main = view.findViewById(R.id.main_container);
+        setTheme();
         allTabsAdapter = new ListAllTabsAdapter(operations.getAllTabs(), getContext(), this);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerView.setAdapter(allTabsAdapter);
@@ -89,5 +94,8 @@ public class AllTabs extends BaseFragment implements TabPlacer {
         allTabsAdapter.notifyDataSetChanged();
     }
 
+    private void setTheme(){
+        main.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
+    }
 
 }

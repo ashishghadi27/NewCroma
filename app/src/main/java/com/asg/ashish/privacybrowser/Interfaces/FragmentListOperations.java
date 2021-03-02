@@ -13,4 +13,5 @@ public interface FragmentListOperations {
     void setStack(Stack<String> stack, WebFragment fragment);
     int getCount();
     void removeFragment(WebFragment fragment);
+    void setActivityTheme();
 }

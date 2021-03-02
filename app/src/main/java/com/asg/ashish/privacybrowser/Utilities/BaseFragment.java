@@ -125,4 +125,22 @@ public class BaseFragment extends Fragment {
         return preferences.getInt("logo", Constants.DUCK_DUCK_GO_SEARCH_LOGO);
     }
 
+    public void saveTheme(int themeId, int suggestId){
+        SharedPreferences preferences = Objects.requireNonNull(getContext()).getSharedPreferences("theme", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("mainBack", themeId);
+        editor.putInt("suggest", suggestId);
+        editor.apply();
+    }
+
+    public int getTheme(){
+        SharedPreferences preferences = Objects.requireNonNull(getContext()).getSharedPreferences("theme", Context.MODE_PRIVATE);
+        return preferences.getInt("mainBack", R.drawable.browser_back);
+    }
+
+    public int getSuggestTheme(){
+        SharedPreferences preferences = Objects.requireNonNull(getContext()).getSharedPreferences("theme", Context.MODE_PRIVATE);
+        return preferences.getInt("suggest", R.color.suggestDefault);
+    }
+
 }

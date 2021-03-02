@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.AllTabs"
     android:orientation="vertical"
+    android:id="@+id/main_container"
     android:background="@drawable/browser_back"
     android:padding="10dp">
 

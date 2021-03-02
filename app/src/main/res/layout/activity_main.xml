@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@drawable/browser_back"
+    android:id="@+id/main_container"
+    android:background="@drawable/browser_back5"
     tools:context=".Activities.MainActivity">
 
     <FrameLayout

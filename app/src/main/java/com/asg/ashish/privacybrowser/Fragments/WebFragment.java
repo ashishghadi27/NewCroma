@@ -1,5 +1,6 @@
 package com.asg.ashish.privacybrowser.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +25,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.asg.ashish.privacybrowser.Adapter.AutoSuggestAdapter;
@@ -68,6 +72,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
     private String url;
     private Stack<String> stack;
     boolean deactivateCanGoBack = false;
+    private CoordinatorLayout main;
 
     public WebFragment(FragmentListOperations operations, String url, Stack<String> stack) {
         this.operations = operations;
@@ -93,12 +98,15 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
 
     }
 
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addressBar = view.findViewById(R.id.addressBar);
         web = view.findViewById(R.id.webView);
+        main = view.findViewById(R.id.main_container);
+        setTheme();
         web.restoreState(savedInstanceState);
         appBarLayout = view.findViewById(R.id.appBarLay);
         optionsLay= view.findViewById(R.id.optionLay);
@@ -360,7 +368,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
-        final LinearLayout newTab, searchEngine, share, rate, report, reload, forward;
+        final LinearLayout newTab, searchEngine, share, rate, report, reload, forward, dialogCont;
 
         newTab = dialog.findViewById(R.id.newTabMenu);
         searchEngine = dialog.findViewById(R.id.searchEngine);
@@ -369,6 +377,10 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         report = dialog.findViewById(R.id.report);
         reload = dialog.findViewById(R.id.reload);
         forward = dialog.findViewById(R.id.forward);
+        dialogCont = dialog.findViewById(R.id.dialog_cont);
+        dialogCont.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
+
+
         if(web.canGoForward()) forward.setVisibility(View.VISIBLE);
         newTab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,12 +448,13 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
-        LinearLayout google, duckDuckGo, bing, reset;
+        LinearLayout google, duckDuckGo, bing, reset, mainSearch;
         google = dialog.findViewById(R.id.google);
         duckDuckGo = dialog.findViewById(R.id.duck_duck_go);
         bing = dialog.findViewById(R.id.bing);
         reset = dialog.findViewById(R.id.reset);
-
+        mainSearch = dialog.findViewById(R.id.main_search_cont);
+        mainSearch.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
         google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -495,6 +508,10 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         String engine = getSearchEngineUrl();
         if(url.equals(Constants.GOOGLE_AFTER_URL) || url.contains(Constants.BING_AFTER_URL) || url.equals(Constants.DUCK_AFTER_URL))
             web.loadUrl(engine);
+    }
+
+    private void setTheme(){
+        main.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
     }
 
 }

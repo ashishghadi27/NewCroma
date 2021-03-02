@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_margin="10dp"
         android:layout_height="wrap_content"
+        android:id="@+id/dialog_cont"
         android:background="@drawable/browser_back"
         android:orientation="vertical"
         android:padding="15dp">

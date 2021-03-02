@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Contacts;
@@ -22,6 +24,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.asg.ashish.privacybrowser.Interfaces.FragmentListOperations;
@@ -35,12 +38,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.Objects;
 import java.util.Stack;
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment{
 
     private AutoCompleteTextView addressBar;
     private FragmentListOperations operations;
     private TextView tabSwitcher;
     private ImageView menu;
+    private RelativeLayout main;
+    private BottomSheetDialog bottom_sheet_dialog;
 
     public HomeFragment(FragmentListOperations operations) {
         this.operations = operations;
@@ -62,12 +67,15 @@ public class HomeFragment extends BaseFragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addressBar = view.findViewById(R.id.addressBar);
         tabSwitcher = view.findViewById(R.id.tabSwitcher);
         menu = view.findViewById(R.id.menu);
+        main = view.findViewById(R.id.main_container);
+        setTheme();
         addressBar.setCompoundDrawablesWithIntrinsicBounds(getSearchEngineLogo(), 0, 0, 0);
         tabSwitcher.setText(operations.getCount() + "");
 
@@ -106,18 +114,26 @@ public class HomeFragment extends BaseFragment {
     }
 
     public void showDialog(){
-        final BottomSheetDialog bottom_sheet_dialog = new BottomSheetDialog(Objects.requireNonNull(getContext()));
+        bottom_sheet_dialog = new BottomSheetDialog(Objects.requireNonNull(getContext()));
         View dialog = View.inflate(getContext(), R.layout.menu_home, null);
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
         final LinearLayout newTab, searchEngine, share, rate, report;
+        RelativeLayout dialogCont;
+        CardView theme1, theme2, theme3, theme4;
+        theme1 = dialog.findViewById(R.id.purple);
+        theme2 = dialog.findViewById(R.id.greenish);
+        theme3 = dialog.findViewById(R.id.reddish_yellow);
+        theme4 = dialog.findViewById(R.id.pinkish_blue);
 
         newTab = dialog.findViewById(R.id.newTabMenu);
         searchEngine = dialog.findViewById(R.id.searchEngine);
         share = dialog.findViewById(R.id.share);
         rate = dialog.findViewById(R.id.rate);
         report = dialog.findViewById(R.id.report);
+        dialogCont = dialog.findViewById(R.id.dialog_cont);
+        dialogCont.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
 
         newTab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,6 +176,34 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
+        theme1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back, R.color.suggestDefault);
+            }
+        });
+
+        theme2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back2, R.color.suggestDefault);
+            }
+        });
+
+        theme3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back3, R.color.suggestDefault);
+            }
+        });
+
+        theme4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSaving(R.drawable.browser_back4, R.color.suggestDefault);
+            }
+        });
+
 
     }
 
@@ -169,11 +213,13 @@ public class HomeFragment extends BaseFragment {
         bottom_sheet_dialog.setContentView(dialog);
         bottom_sheet_dialog.show();
 
-        LinearLayout google, duckDuckGo, bing, reset;
+        LinearLayout google, duckDuckGo, bing, reset, mainSearch;
         google = dialog.findViewById(R.id.google);
         duckDuckGo = dialog.findViewById(R.id.duck_duck_go);
         bing = dialog.findViewById(R.id.bing);
         reset = dialog.findViewById(R.id.reset);
+        mainSearch = dialog.findViewById(R.id.main_search_cont);
+        mainSearch.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
 
         google.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,4 +262,17 @@ public class HomeFragment extends BaseFragment {
     public void setOperations(FragmentListOperations operations){
         this.operations = operations;
     }
+
+    private void setTheme(){
+        main.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
+    }
+
+
+    public void startSaving(int themeId, int suggestId){
+        saveTheme(themeId, suggestId);
+        operations.setActivityTheme();
+        setTheme();
+        bottom_sheet_dialog.dismiss();
+    }
+
 }
