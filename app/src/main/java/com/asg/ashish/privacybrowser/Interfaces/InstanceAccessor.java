@@ -1,5 +1,7 @@
 package com.asg.ashish.privacybrowser.Interfaces;
 
+import android.webkit.WebView;
+
 import java.util.List;
 
 public interface InstanceAccessor {
@@ -13,4 +15,5 @@ public interface InstanceAccessor {
     String getSearchEngine();
     boolean hasStoragePermission();
     boolean requestStoragePermission();
+    WebView getWebView();
 }

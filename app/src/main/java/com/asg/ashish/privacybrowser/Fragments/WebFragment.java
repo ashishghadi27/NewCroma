@@ -109,6 +109,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         super.onViewCreated(view, savedInstanceState);
         addressBar = view.findViewById(R.id.addressBar);
         web = view.findViewById(R.id.webView);
+        clearAll();
         main = view.findViewById(R.id.main_container);
         setTheme();
         web.restoreState(savedInstanceState);
@@ -250,7 +251,8 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         webSettings.setGeolocationEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setDisplayZoomControls(false);
-        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setAppCacheEnabled(true);
         web.setVerticalScrollBarEnabled(true);
         web.setWebViewClient(new WebViewRendererClient(this));
         web.setWebChromeClient(new WebViewChromeRendererClient(progressBar, this));
@@ -263,16 +265,18 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
     @Override
     public boolean goBack() {
         if(web.canGoBack() && ! deactivateCanGoBack){
+            Log.v("In web go back ", "else");
             web.goBack();
             return false;
         }
         else if(stack != null && !stack.isEmpty()){
-            Log.v("In upper", "else");
+            Log.v("In Stack ", "else");
             deactivateCanGoBack = true;
             web.loadUrl(stack.pop());
             if(stack.isEmpty()) {
                 deactivateCanGoBack = false;
                 web.clearHistory();
+                Log.v("History", "Cleared");
             }
             return false;
         }
@@ -321,7 +325,6 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
 
     @Override
     public void setAdapter(List<String> suggestions) {
-        Log.v("LIST: " , suggestions.size() + "");
         autoSuggestAdapter.setData(suggestions);
         autoSuggestAdapter.notifyDataSetChanged();
     }
@@ -532,6 +535,15 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
 
     private void setTheme(){
         main.setBackground(ResourcesCompat.getDrawable(getResources(), getTheme(), Objects.requireNonNull(getActivity()).getTheme()));
+    }
+
+    private void clearAll(){
+        web.clearHistory();
+        //web.clearCache(true);
+        web.clearFormData();
+        web.clearMatches();
+        web.clearSslPreferences();
+        web.clearFocus();
     }
 
 }

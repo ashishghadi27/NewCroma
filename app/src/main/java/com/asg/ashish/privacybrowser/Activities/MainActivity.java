@@ -6,8 +6,14 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -32,18 +38,34 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v("created", "re");
         super.onCreate(null);
         setContentView(R.layout.activity_main);
         main = findViewById(R.id.main_container);
         setActivityTheme();
-        //deleteCache(this);
+        clearCookies(this);
         fragmentList = new ArrayList<>();
+
+        Intent intent = getIntent();
+        final Uri uri = intent.getData();
+        try {
+            assert uri != null;
+            String url = uri.toString();
+            if (Patterns.WEB_URL.matcher(url).matches()) {
+                if (!url.startsWith("http")) url = "http://" + url;
+                addWebTab(url);
+            }
+            else loadHome();
+
+        } catch (Exception e) {
+            loadHome();
+        }
+    }
+
+    private void loadHome(){
         HomeFragment fragment = new HomeFragment();
         fragment.setOperations(this);
         addFragmentAct(fragment, "Home");
     }
-
 
     @Override
     public void addTab(WebFragment fragment, String title) {
@@ -114,6 +136,21 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
 
     public void setActivityTheme(){
         main.setBackground(ResourcesCompat.getDrawable(getResources(), loadTheme(), getTheme()));
+    }
+
+    private void addWebTab(String url){
+        WebFragment webFragment = new WebFragment(this, url, null);
+        this.addTab(webFragment, url);
+        Stack<String> stack = new Stack<>();
+        stack.push(url);
+        this.setStack(stack, webFragment);
+        addFragmentAct(webFragment, "web" + this.getCount() + 1);
+    }
+
+    public void clearCookies(Context context){
+        CookieSyncManager.createInstance(context);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookies(null);
     }
 
 }

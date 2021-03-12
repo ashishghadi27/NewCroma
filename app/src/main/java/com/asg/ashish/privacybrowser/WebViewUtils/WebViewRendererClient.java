@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Picture;
 import android.net.MailTo;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -16,6 +19,8 @@ import android.webkit.WebViewClient;
 
 import com.asg.ashish.privacybrowser.Interfaces.InstanceAccessor;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Objects;
 
 public class WebViewRendererClient extends WebViewClient {
@@ -29,7 +34,6 @@ public class WebViewRendererClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        Log.v("Page STart URl: ", view.getUrl());
         accessor.onPageStarted();
         accessor.setUrl(url);
         accessor.initHttpsStatus();
@@ -42,6 +46,7 @@ public class WebViewRendererClient extends WebViewClient {
         accessor.stopRefreshing();
         accessor.setUrl(view.getTitle());
         accessor.setHttpsStatus(view.getUrl().contains("https"));
+        //captureScreenshot();
     }
 
     @Override
@@ -123,4 +128,32 @@ public class WebViewRendererClient extends WebViewClient {
         }
 
     }
+
+    private void captureScreenshot(){
+        Picture picture = accessor.getWebView().capturePicture();
+        Bitmap b = Bitmap.createBitmap(picture.getWidth(),
+                picture.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        File sdCard = Environment.getExternalStorageDirectory();
+        picture.draw(c);
+        String path = sdCard.getAbsolutePath()+"/Croma";
+        Log.v("Path: ", path);
+        File directory = new File (path);
+        directory.mkdirs();
+        File file = new File(directory, "preview.jpg");
+        FileOutputStream fos = null;
+        try {
+
+            fos = new FileOutputStream(file);
+            if (fos != null) {
+                Log.v("Before compress", "Compressed");
+                b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                Log.v("After compress", "Compressed");
+                fos.close();
+            }
+        } catch (Exception e) {
+            Log.v("Exception: ", e.getCause() + "");
+        }
+    }
+
 }

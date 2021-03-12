@@ -326,9 +326,9 @@ public class HomeFragment extends BaseFragment{
 
     private String getCacheSize() {
         long size = 0;
-        size += getDirSize(Objects.requireNonNull(getActivity()).getCacheDir());
-        size += getDirSize(Objects.requireNonNull(getActivity().getExternalCacheDir()));
-        size += getDirSize(Objects.requireNonNull(getActivity().getCodeCacheDir()));
+        size += getDirSize(Objects.requireNonNull(getContext()).getCacheDir());
+        size += getDirSize(Objects.requireNonNull(getContext().getExternalCacheDir()));
+        size += getDirSize(Objects.requireNonNull(getContext().getCodeCacheDir()));
         Log.v("Size",size + "");
         if(size / (1024 * 1024) > 0) return size / (1024 * 1024) + " MB";
         else return size / (1024) + " KB";
@@ -349,6 +349,10 @@ public class HomeFragment extends BaseFragment{
     public static void deleteCache(Context context) {
         try {
             File dir = context.getCacheDir();
+            deleteDir(dir);
+            dir = context.getExternalCacheDir();
+            deleteDir(dir);
+            dir = context.getCodeCacheDir();
             deleteDir(dir);
         } catch (Exception e) { e.printStackTrace();}
     }

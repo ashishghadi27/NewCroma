@@ -42,7 +42,7 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
             closeTab = view.findViewById(R.id.closeTab);
             webView.setInitialScale(100);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
 
     }
@@ -67,6 +67,7 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
         final FragmentStorage tab = listItems.get(position);
         holder.title.setText(tab.getTitle());
         if(tab.getHistory() != null && !tab.getHistory().isEmpty())
+            //holder.webView = tab.getFragment().getWebView();
             holder.webView.loadUrl(tab.getHistory().peek());
         //else holder.webView.loadUrl(tab.getFragment().getSearchEngineUrl());
 
