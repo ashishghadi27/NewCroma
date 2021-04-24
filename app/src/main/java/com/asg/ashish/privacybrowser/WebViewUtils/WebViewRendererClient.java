@@ -40,6 +40,12 @@ public class WebViewRendererClient extends WebViewClient {
     }
 
     @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
+        //accessor.onPageCommitVisible();
+    }
+
+    @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
         accessor.onPageFinished();

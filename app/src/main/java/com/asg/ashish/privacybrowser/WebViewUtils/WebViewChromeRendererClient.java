@@ -27,5 +27,6 @@ public class WebViewChromeRendererClient extends WebChromeClient {
         animation.start();
         if(newProgress > 75)
             accessor.stopRefreshing();
+        if(newProgress == 100) accessor.onPageCommitVisible();
     }
 }

@@ -1,6 +1,11 @@
 package com.asg.ashish.privacybrowser.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,19 +35,22 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView title;
-        private WebView webView;
+        //private WebView webView;
         private CardView previewCont;
         private LinearLayout closeTab;
+        private ImageView cachePreview, favicon;
 
         public MyViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
-            webView = view.findViewById(R.id.webView);
+            //webView = view.findViewById(R.id.webView);
             previewCont = view.findViewById(R.id.previewCont);
             closeTab = view.findViewById(R.id.closeTab);
-            webView.setInitialScale(100);
+            cachePreview = view.findViewById(R.id.cachePreview);
+            favicon = view.findViewById(R.id.favicon);
+            /*webView.setInitialScale(100);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);*/
         }
 
     }
@@ -52,7 +60,6 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
         this.placer = placer;
     }
 
-
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -61,17 +68,22 @@ public class ListAllTabsAdapter extends RecyclerView.Adapter<ListAllTabsAdapter.
         return new MyViewHolder(itemView);
     }
 
-
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final FragmentStorage tab = listItems.get(position);
-        holder.title.setText(tab.getTitle());
-        if(tab.getHistory() != null && !tab.getHistory().isEmpty())
-            //holder.webView = tab.getFragment().getWebView();
-            holder.webView.loadUrl(tab.getHistory().peek());
-        //else holder.webView.loadUrl(tab.getFragment().getSearchEngineUrl());
+        WebView webView = tab.getFragment().getWebView();
+        holder.title.setText(webView.getTitle());
+        holder.favicon.setImageBitmap(webView.getFavicon());
+        if(tab.getHistory() != null && !tab.getHistory().isEmpty()){
+            Bitmap bitmap = webView.getDrawingCache();
+            if(bitmap != null && !bitmap.isRecycled()) {
+                holder.cachePreview.setImageBitmap(bitmap);
+                holder.cachePreview.setVisibility(View.VISIBLE);
+            }
+        }
 
-        holder.webView.setOnTouchListener(new View.OnTouchListener() {
+        holder.cachePreview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 long duration = event.getEventTime() - event.getDownTime();

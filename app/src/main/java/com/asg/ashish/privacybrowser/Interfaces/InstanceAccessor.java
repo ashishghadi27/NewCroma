@@ -8,6 +8,7 @@ public interface InstanceAccessor {
     void stopRefreshing();
     void onPageStarted();
     void onPageFinished();
+    void onPageCommitVisible();
     void setUrl(String url);
     void setHttpsStatus(boolean isHttps);
     void initHttpsStatus();

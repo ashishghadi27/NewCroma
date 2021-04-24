@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -254,6 +255,7 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setAppCacheEnabled(true);
         web.setVerticalScrollBarEnabled(true);
+        web.setDrawingCacheEnabled(true);
         web.setWebViewClient(new WebViewRendererClient(this));
         web.setWebChromeClient(new WebViewChromeRendererClient(progressBar, this));
         web.setScrollContainer(true);
@@ -303,6 +305,12 @@ public class WebFragment extends BaseFragment implements WebViewBack, InstanceAc
         progressBar.setProgress(0);
         progressBar.setVisibility(View.GONE);
         operations.updateTitle(this, web.getTitle());
+
+    }
+
+    @Override
+    public void onPageCommitVisible() {
+
     }
 
     @Override

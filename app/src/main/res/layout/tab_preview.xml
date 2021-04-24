@@ -1,6 +1,6 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="170dp"
-    android:layout_height="250dp"
+    android:layout_height="300dp"
     android:layout_margin="10dp"
     app:cardElevation="5dp"
     app:cardCornerRadius="5dp"
@@ -20,6 +20,16 @@
             android:background="#3C3A3C"
             android:padding="5dp">
 
+            <ImageView
+                android:id="@+id/favicon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/browser_back"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,9 +38,9 @@
                 android:textSize="12sp"
                 android:text="Google"
                 android:maxLines="1"
+                android:layout_toEndOf="@+id/favicon"
                 android:layout_centerVertical="true"
                 android:padding="5dp"
-                android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/closeTab"
                 />
 
@@ -52,18 +62,31 @@
 
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             >
 
+            <ImageView
+
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"
+                android:scaleType="fitXY"
+                android:cropToPadding="true"
+                android:id="@+id/cachePreview"
+                android:adjustViewBounds="true"
+                />
+
             <WebView
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/webView"
                 />
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>

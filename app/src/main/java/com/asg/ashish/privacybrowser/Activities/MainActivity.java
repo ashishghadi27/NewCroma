@@ -38,7 +38,9 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("Hello", "Here");
         super.onCreate(null);
+        Log.v("Hello", "there");
         setContentView(R.layout.activity_main);
         main = findViewById(R.id.main_container);
         setActivityTheme();
@@ -56,7 +58,7 @@ public class MainActivity extends BaseActivity implements FragmentListOperations
             }
             else loadHome();
 
-        } catch (Exception e) {
+        } catch (Exception | AssertionError e) {
             loadHome();
         }
     }
